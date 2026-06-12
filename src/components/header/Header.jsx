@@ -30,6 +30,7 @@ function Header() {
       >
         <Link
           to="/shop"
+          onClick={() => setIsMenuOpen(false)}
           className="text-[18px] cursor-pointer hover:text-gray-300"
         >
           Shop
