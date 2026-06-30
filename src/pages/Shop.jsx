@@ -173,7 +173,7 @@ function Shop() {
 
               return (
                 <article key={product._id}>
-                  <div className="bg-[#f7f6f4] h-60 flex items-center justify-center overflow-hidden">
+                  <div className="bg-[#f7f6f4] h-58 flex items-center justify-center overflow-hidden">
                     {firstImage ? (
                       <img
                         src={firstImage}
