@@ -1,25 +1,22 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { FaSearch, FaUser, FaShoppingBag } from "react-icons/fa";
 import MegaMenu from "./MegaMenu";
-import { getNestedCategories } from "../../services/categoryService";
+import { fetchCategories } from "../../store/categorySlice";
 
 function Header() {
+  const dispatch = useDispatch();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [categories, setCategories] = useState([]);
+
+  const { categories } = useSelector((state) => state.category);
 
   useEffect(() => {
-    async function loadCategories() {
-      try {
-        const data = await getNestedCategories();
-        setCategories(data);
-      } catch (error) {
-        console.log("Categories could not be loaded:", error);
-      }
+    if (categories.length === 0) {
+      dispatch(fetchCategories());
     }
-
-    loadCategories();
-  }, []);
+  }, [dispatch, categories.length]);
 
   return (
     <header className="relative h-16 bg-black text-white grid grid-cols-[1fr_auto_1fr] items-center px-14">

@@ -1,77 +1,58 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { PiSlidersHorizontalLight } from "react-icons/pi";
-import { getNestedCategories } from "../services/categoryService";
-import { getProducts } from "../services/productService";
+import { fetchCategories } from "../store/categorySlice";
+import { fetchProducts } from "../store/productSlice";
 
 function Shop() {
+  const dispatch = useDispatch();
+
   const [searchParams] = useSearchParams();
   const selectedCategory = searchParams.get("category");
 
   const [filter, setFilter] = useState(true);
-  const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
   const [openCategoryId, setOpenCategoryId] = useState(null);
-  const [loading, setLoading] = useState(false);
+
+  const { categories } = useSelector((state) => state.category);
+  const { products, loading } = useSelector((state) => state.product);
 
   useEffect(() => {
-    async function loadCategories() {
-      try {
-        const data = await getNestedCategories();
-        setCategories(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.log("Categories could not be loaded:", error);
-        setCategories([]);
-      }
+    if (categories.length === 0) {
+      dispatch(fetchCategories());
     }
-
-    loadCategories();
-  }, []);
+  }, [dispatch, categories.length]);
 
   useEffect(() => {
-    async function loadProducts() {
-      try {
-        setLoading(true);
+    const params = {
+      limit: 50,
+    };
 
-        const params = {
-          limit: 50,
-        };
+    if (selectedCategory && categories.length > 0) {
+      const slugs = selectedCategory.split(",");
+      const childSlug = slugs[1];
 
-        if (selectedCategory && categories.length > 0) {
-          const slugs = selectedCategory.split(",");
-          const childSlug = slugs[1];
+      let selectedChildCategory = null;
 
-          let selectedChildCategory = null;
+      categories.forEach((category) => {
+        const foundChild = category.children?.find(
+          (child) => child.slug === childSlug
+        );
 
-          categories.forEach((category) => {
-            const foundChild = category.children?.find(
-              (child) => child.slug === childSlug
-            );
-
-            if (foundChild) {
-              selectedChildCategory = foundChild;
-            }
-          });
-
-          if (selectedChildCategory) {
-            params.categories = selectedChildCategory._id;
-          }
+        if (foundChild) {
+          selectedChildCategory = foundChild;
         }
+      });
 
-        const data = await getProducts(params);
-        setProducts(data.products || []);
-      } catch (error) {
-        console.log("Products could not be loaded:", error);
-        setProducts([]);
-      } finally {
-        setLoading(false);
+      if (selectedChildCategory) {
+        params.categories = selectedChildCategory._id;
       }
     }
 
     if (!selectedCategory || categories.length > 0) {
-      loadProducts();
+      dispatch(fetchProducts(params));
     }
-  }, [selectedCategory, categories]);
+  }, [dispatch, selectedCategory, categories]);
 
   function handleCategoryClick(categoryId) {
     setOpenCategoryId((prevId) => (prevId === categoryId ? null : categoryId));
@@ -172,31 +153,33 @@ function Shop() {
               const price = firstVariant?.price;
 
               return (
-                <article key={product._id}>
-                  <div className="bg-[#f7f6f4] h-58 flex items-center justify-center overflow-hidden">
-                    {firstImage ? (
-                      <img
-                        src={firstImage}
-                        alt={product.title}
-                        className="w-full h-full object-cover hover:scale-105 transition duration-300"
-                      />
-                    ) : (
-                      <span className="text-gray-400">No image</span>
-                    )}
-                  </div>
+                <Link to={`/product/${product.slug}`} key={product._id}>
+                  <article>
+                    <div className="bg-[#f7f6f4] h-60 flex items-center justify-center overflow-hidden cursor-pointer">
+                      {firstImage ? (
+                        <img
+                          src={firstImage}
+                          alt={product.title}
+                          className="w-full h-full object-cover hover:scale-105 transition duration-300"
+                        />
+                      ) : (
+                        <span className="text-gray-400">No image</span>
+                      )}
+                    </div>
 
-                  <div className="mt-5">
-                    <h3 className="text-[18px] font-medium leading-6">
-                      {product.title}
-                    </h3>
+                    <div className="mt-5 text-black">
+                      <h3 className="text-[18px] font-medium leading-6">
+                        {product.title}
+                      </h3>
 
-                    {price && (
-                      <p className="mt-4 text-[17px]">
-                        ${price}
-                      </p>
-                    )}
-                  </div>
-                </article>
+                      {price && (
+                        <p className="mt-4 text-[17px]">
+                          ${price}
+                        </p>
+                      )}
+                    </div>
+                  </article>
+                </Link>
               );
             })
           )}
