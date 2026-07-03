@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getProductBySlug } from "../services/productService";
+import { SlArrowDown } from "react-icons/sl";
 
 function ProductDetail() {
   const { slug } = useParams();
@@ -116,13 +117,13 @@ function ProductDetail() {
               <img
                 src={image.url}
                 alt={product.title}
-                className="h-full w-full object-contain"
+                className="h-full w-full object-contain cursor-pointer"
               />
             </button>
           ))}
         </div>
 
-        <div className="relative bg-[#f7f6f4] flex min-h-[380px] items-center justify-center overflow-hidden md:min-h-[520px] lg:min-h-[650px]">
+        <div className="relative bg-[#f7f6f4] flex min-h-95 items-center justify-center overflow-hidden md:min-h-130 lg:min-h-160">
           {selectedImage ? (
             <img
               src={selectedImage}
@@ -238,16 +239,22 @@ function ProductDetail() {
               Add to Bag
             </button>
 
-            <select
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              className="h-16 w-24 rounded-md border border-black px-4 text-lg"
-            >
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-            </select>
+            <div className="relative h-16 w-24">
+              <select
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                className="h-full w-full appearance-none rounded-md border border-black bg-white px-5 pr-10 text-lg outline-none cursor-pointer"
+              >
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+
+              <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xl">
+                <SlArrowDown />
+              </span>
+            </div>
           </div>
 
           <hr className="my-8 border-gray-300" />
