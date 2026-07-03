@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getProductBySlug } from "../services/productService";
 import { SlArrowDown } from "react-icons/sl";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../store/cartSlice";
 
 function ProductDetail() {
   const { slug } = useParams();
+  const dispatch = useDispatch();
 
   const [product, setProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
@@ -35,6 +38,24 @@ function ProductDetail() {
 
     loadProduct();
   }, [slug]);
+
+  function handleAddToBag() {
+    if (!product || !selectedVariant) return;
+
+    const item = {
+      productId: product._id,
+      variantId: selectedVariant._id,
+      title: product.title,
+      slug: product.slug,
+      image: selectedImage,
+      price: selectedVariant.price,
+      color: selectedVariant.specs?.color,
+      size: selectedVariant.specs?.size,
+      quantity: Number(quantity),
+    };
+
+    dispatch(addToCart(item));
+  }
 
   if (loading) {
     return <main className="px-5 py-8 md:px-14 md:py-12">Loading product...</main>;
@@ -235,7 +256,10 @@ function ProductDetail() {
           </p>
 
           <div className="mt-3 flex gap-4">
-            <button className="h-16 flex-1 rounded-md bg-black text-lg font-semibold text-white hover:bg-gray-800">
+            <button
+              onClick={handleAddToBag}
+              className="h-16 flex-1 rounded-md bg-black text-lg font-semibold text-white hover:bg-gray-800"
+            >
               Add to Bag
             </button>
 

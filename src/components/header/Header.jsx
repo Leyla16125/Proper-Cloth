@@ -11,6 +11,11 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const { categories } = useSelector((state) => state.category);
+  const { cartItems } = useSelector((state) => state.cart);
+
+  const cartCount = cartItems.reduce((total, item) => {
+    return total + item.quantity;
+  }, 0);
 
   useEffect(() => {
     if (categories.length === 0) {
@@ -51,9 +56,18 @@ function Header() {
           <FaUser />
         </button>
 
-        <button className="hover:text-gray-300 cursor-pointer">
+        <Link
+          to="/bag"
+          className="relative hover:text-gray-300 cursor-pointer"
+        >
           <FaShoppingBag />
-        </button>
+
+          {cartCount > 0 && (
+            <span className="absolute -right-3 -top-3 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[11px] font-semibold text-black">
+              {cartCount}
+            </span>
+          )}
+        </Link>
       </div>
     </header>
   );

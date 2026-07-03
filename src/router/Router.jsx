@@ -3,7 +3,7 @@ import MainLayout from "../layout/MainLayout";
 import Home from "../pages/Home";
 import Shop from "../pages/Shop";
 import ProductDetail from "../pages/ProductDetail.jsx";
-
+import Bag from "../pages/Bag";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +22,10 @@ const router = createBrowserRouter([
         path: "product/:slug",
         element: <ProductDetail />,
       },
+      {
+        path: "bag",
+        element: <Bag />,
+      }
     ],
   },
 ]);
