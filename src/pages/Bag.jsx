@@ -21,7 +21,7 @@ function Bag() {
 
   return (
     <main className="min-h-[calc(100vh-64px)] bg-[#f7f7f7] px-5 py-10 md:px-14 lg:px-32">
-      <h1 className="mb-10 text-[36px] font-semibold md:text-[44px]">
+      <h1 className="mb-10 text-[36px] md:text-[44px] italic font-light">
         Shopping Bag
       </h1>
 
@@ -45,7 +45,7 @@ function Bag() {
           <div className="space-y-5">
             <div className="hidden rounded-md bg-white px-7 py-5 text-sm uppercase tracking-[2px] text-gray-500 shadow-sm md:flex md:items-center md:justify-between">
               <span>Custom Orders</span>
-              <span>Delivery by Mar 13 - Mar 16</span>
+              <span>Delivery in 2-3 days</span>
             </div>
 
             {cartItems.map((item) => (
