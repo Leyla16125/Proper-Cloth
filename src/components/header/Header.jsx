@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FaSearch, FaUser, FaShoppingBag } from "react-icons/fa";
 import MegaMenu from "./MegaMenu";
@@ -7,8 +7,11 @@ import { fetchCategories } from "../../store/categorySlice";
 
 function Header() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
   const { categories } = useSelector((state) => state.category);
   const { cartItems } = useSelector((state) => state.cart);
@@ -22,6 +25,18 @@ function Header() {
       dispatch(fetchCategories());
     }
   }, [dispatch, categories.length]);
+
+  function handleSearchKeyDown(e) {
+    if (e.key === "Enter") {
+      const value = searchText.trim();
+
+      if (value === "") return;
+
+      navigate(`/shop?search=${encodeURIComponent(value)}`);
+      setIsSearchOpen(false);
+      setSearchText("");
+    }
+  }
 
   return (
     <header className="relative h-16 bg-black text-white grid grid-cols-[1fr_auto_1fr] items-center px-14">
@@ -47,8 +62,23 @@ function Header() {
         </h1>
       </Link>
 
-      <div className="flex justify-end items-center gap-8 text-[18px]">
-        <button className="hover:text-gray-300 cursor-pointer">
+      <div className="relative flex justify-end items-center gap-8 text-[18px]">
+        {isSearchOpen && (
+          <input
+            type="text"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
+            placeholder="Search products..."
+            autoFocus
+            className="absolute right-34 h-10 w-65 rounded-md bg-white px-4 text-sm text-black outline-none"
+          />
+        )}
+
+        <button
+          onClick={() => setIsSearchOpen(!isSearchOpen)}
+          className="hover:text-gray-300 cursor-pointer"
+        >
           <FaSearch />
         </button>
 

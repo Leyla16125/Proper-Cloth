@@ -11,6 +11,8 @@ function Shop() {
   const [searchParams] = useSearchParams();
   const selectedCategory = searchParams.get("category");
 
+  const searchQuery = searchParams.get("search");
+
   const [filter, setFilter] = useState(true);
   const [openCategoryId, setOpenCategoryId] = useState(null);
 
@@ -27,6 +29,10 @@ function Shop() {
     const params = {
       limit: 50,
     };
+
+    if (searchQuery) {
+      params.search = searchQuery;
+    }
 
     if (selectedCategory && categories.length > 0) {
       const slugs = selectedCategory.split(",");
@@ -52,7 +58,7 @@ function Shop() {
     if (!selectedCategory || categories.length > 0) {
       dispatch(fetchProducts(params));
     }
-  }, [dispatch, selectedCategory, categories]);
+  }, [dispatch, selectedCategory, searchQuery, categories]);
 
   function handleCategoryClick(categoryId) {
     setOpenCategoryId((prevId) => (prevId === categoryId ? null : categoryId));
@@ -145,8 +151,18 @@ function Shop() {
           {loading ? (
             <p className="text-lg">Loading products...</p>
           ) : products.length === 0 ? (
-            <p className="text-lg">No products found.</p>
-          ) : (
+            <div>
+              {searchQuery ? (
+                <p className="text-lg text-gray-500">
+                  No results found for "{searchQuery}".
+                </p>
+              ) : (
+                <p className="text-lg text-gray-500">
+                  No products found.
+                </p>
+              )}
+            </div>
+          ): (
             products.map((product) => {
               const firstVariant = product.variants?.[0];
               const firstImage = firstVariant?.images?.[0]?.url;
