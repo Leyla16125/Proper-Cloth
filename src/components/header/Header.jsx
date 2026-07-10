@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { FaSearch, FaUser, FaShoppingBag } from "react-icons/fa";
+import { FaSearch, FaUser, FaShoppingBag, FaBars, FaTimes } from "react-icons/fa";
 import MegaMenu from "./MegaMenu";
 import { fetchCategories } from "../../store/categorySlice";
 
@@ -10,6 +10,8 @@ function Header() {
   const navigate = useNavigate();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
 
@@ -26,6 +28,7 @@ function Header() {
     }
   }, [dispatch, categories.length]);
 
+
   function handleSearchKeyDown(e) {
     if (e.key === "Enter") {
       const value = searchText.trim();
@@ -33,28 +36,61 @@ function Header() {
       if (value === "") return;
 
       navigate(`/shop?search=${encodeURIComponent(value)}`);
+
       setIsSearchOpen(false);
       setSearchText("");
     }
   }
 
+
   return (
-    <header className="relative h-16 bg-black text-white grid grid-cols-[1fr_auto_1fr] items-center px-14">
+    <header className="relative h-16 bg-black text-white grid grid-cols-[1fr_auto_1fr] items-center px-5 md:px-14">
+
       <div
         className="relative h-full flex items-center"
         onMouseEnter={() => setIsMenuOpen(true)}
         onMouseLeave={() => setIsMenuOpen(false)}
       >
-        <Link
-          to="/shop"
-          onClick={() => setIsMenuOpen(false)}
-          className="text-[18px] cursor-pointer hover:text-gray-300"
-        >
-          Shop
-        </Link>
 
-        {isMenuOpen && <MegaMenu categories={categories} />}
+        {/* Desktop */}
+        <div className="hidden md:block">
+
+          <Link
+            to="/shop"
+            onClick={() => setIsMenuOpen(false)}
+            className="text-[18px] cursor-pointer hover:text-gray-300"
+          >
+            Shop
+          </Link>
+
+          {isMenuOpen && <MegaMenu categories={categories} />}
+
+        </div>
+
+
+        {/* Mobile */}
+        <div className="md:hidden">
+
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="text-xl cursor-pointer"
+          >
+            {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+          </button>
+
+
+          {isMobileMenuOpen && (
+            <MegaMenu
+              categories={categories}
+              onClose={() => setIsMobileMenuOpen(false)}
+            />
+          )}
+
+        </div>
+
+
       </div>
+
 
       <Link to="/">
         <h1 className="text-[20px] font-normal cursor-pointer hover:text-gray-300">
@@ -62,7 +98,9 @@ function Header() {
         </h1>
       </Link>
 
-      <div className="relative flex justify-end items-center gap-8 text-[18px]">
+
+      <div className="relative flex justify-end items-center gap-5 md:gap-8 text-[18px]">
+
         {isSearchOpen && (
           <input
             type="text"
@@ -71,9 +109,10 @@ function Header() {
             onKeyDown={handleSearchKeyDown}
             placeholder="Search products..."
             autoFocus
-            className="absolute right-34 h-10 w-65 rounded-md bg-white px-4 text-sm text-black outline-none"
+            className="absolute right-28 h-10 w-54 md:w-65 rounded-md bg-white px-4 text-sm text-black outline-none"
           />
         )}
+
 
         <button
           onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -82,9 +121,11 @@ function Header() {
           <FaSearch />
         </button>
 
+
         <button className="hover:text-gray-300 cursor-pointer">
           <FaUser />
         </button>
+
 
         <Link
           to="/bag"
@@ -97,8 +138,13 @@ function Header() {
               {cartCount}
             </span>
           )}
+
         </Link>
+
+
       </div>
+
+
     </header>
   );
 }

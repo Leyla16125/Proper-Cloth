@@ -72,11 +72,7 @@ function Shop() {
             Men's Clothing & Accessories
           </h1>
 
-          <input
-            type="text"
-            placeholder="Search products..."
-            className="w-100 h-11 bg-gray-100 rounded-md px-4 outline-none"
-          />
+        
         </div>
       </section>
 
