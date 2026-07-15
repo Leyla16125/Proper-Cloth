@@ -67,8 +67,8 @@ function Shop() {
   return (
     <main className="px-14 py-12">
       <section>
-        <div className="md:flex items-center justify-between mb-16">
-          <h1 className="text-[44px] italic font-light">
+        <div className="md:flex items-center justify-between mb-12">
+          <h1 className="md:text-[40px] text-[24px] italic font-light">
             Men's Clothing & Accessories
           </h1>
 

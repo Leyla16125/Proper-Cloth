@@ -91,11 +91,11 @@ function ProductDetail() {
         item.specs?.color === selectedVariant?.specs?.color
     );
 
-    if (variantBySize) {
-      setSelectedVariant(variantBySize);
-      setSelectedImage(variantBySize.images?.[0]?.url || selectedImage);
-      setSelectedImageIndex(0);
-    }
+    if (!variantBySize || Number(variantBySize.stock) === 0) return;
+
+    setSelectedVariant(variantBySize);
+    setSelectedImage(variantBySize.images?.[0]?.url || selectedImage);
+    setSelectedImageIndex(0);
   }
 
   function showNextImage() {
@@ -234,19 +234,39 @@ function ProductDetail() {
               </h3>
 
               <div className="flex flex-wrap gap-3">
-                {sizes.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => handleSizeClick(size)}
-                    className={`h-14 min-w-14 rounded-md border px-5 font-semibold ${
-                      selectedVariant?.specs?.size === size
-                        ? "bg-black text-white"
-                        : "bg-gray-100 text-gray-400"
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
+                {sizes.map((size) => {
+                  const sizeVariant = variants.find(
+                    (item) =>
+                      item.specs?.size === size &&
+                      item.specs?.color === selectedVariant?.specs?.color
+                  );
+
+                  const isOutOfStock = !sizeVariant || Number(sizeVariant.stock) === 0;
+
+                  return (
+                    <button
+                      key={size}
+                      disabled={isOutOfStock}
+                      onClick={() => handleSizeClick(size)}
+                      className={`relative h-14 min-w-14 overflow-hidden rounded-md border px-5 font-semibold ${
+                        isOutOfStock
+                          ? "cursor-not-allowed bg-gray-100 text-gray-300 border-gray-200"
+                          : selectedVariant?.specs?.size === size
+                          ? "bg-black text-white"
+                          : "bg-gray-100 text-gray-400 cursor-pointer"
+                      }`}
+                    >
+                      {size}
+
+                      {isOutOfStock && (
+                        <>
+                          <span className="absolute left-1/2 top-1/2 h-0.5 w-10 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-gray-400"></span>
+                          <span className="absolute left-1/2 top-1/2 h-0.5 w-10 -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-gray-400"></span>
+                        </>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -258,7 +278,7 @@ function ProductDetail() {
           <div className="mt-3 flex gap-4">
             <button
               onClick={handleAddToBag}
-              className="h-16 flex-1 rounded-md bg-black text-lg font-semibold text-white hover:bg-gray-800"
+              className="h-16 flex-1 rounded-md bg-black text-lg font-semibold text-white hover:bg-gray-800 cursor-pointer"
             >
               Add to Bag
             </button>

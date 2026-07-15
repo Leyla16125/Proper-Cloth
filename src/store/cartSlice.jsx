@@ -24,10 +24,13 @@ const cartSlice = createSlice({
       );
 
       if (existingItem) {
-        existingItem.quantity += newItem.quantity;
+        existingItem.quantity = Math.min(existingItem.quantity + newItem.quantity, 4);
       } else {
-        state.cartItems.push(newItem);
-      }
+        state.cartItems.push({
+          ...newItem,
+          quantity: Math.min(newItem.quantity, 4),
+        });
+}
 
       saveCartToLocalStorage(state.cartItems);
     },
@@ -37,7 +40,7 @@ const cartSlice = createSlice({
 
       const item = state.cartItems.find((item) => item.variantId === variantId);
 
-      if (item) {
+      if (item && item.quantity < 4) {
         item.quantity += 1;
       }
 

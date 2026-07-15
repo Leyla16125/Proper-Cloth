@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -8,6 +9,7 @@ import {
 
 function Bag() {
   const dispatch = useDispatch();
+  const [warning, setWarning] = useState("");
 
   const { cartItems } = useSelector((state) => state.cart);
 
@@ -19,8 +21,42 @@ function Bag() {
   const shipping = cartItems.length > 0 ? 18 : 0;
   const total = subtotal - discount + shipping;
 
+  function handleIncrease(item) {
+    if (item.quantity >= 4) {
+      setWarning("You can add a maximum of 4 items from the same product.");
+
+      setTimeout(() => {
+        setWarning("");
+      }, 10000);
+
+      return;
+    }
+
+    dispatch(increaseQuantity(item.variantId));
+  }
+
   return (
     <main className="min-h-[calc(100vh-64px)] bg-[#f7f7f7] px-5 py-10 md:px-14 lg:px-32">
+      {warning && (
+        <div className="fixed right-6 top-20 z-50 md:w-100 w-70 rounded-md border border-black bg-white px-5 py-4 shadow-xl">
+          <div className="flex items-start gap-2">
+            <span className="mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-black md:text-[12px] text-[10px] text-white">
+              !
+            </span>
+
+            <div>
+              <h3 className="md:text-[14px] text-[10px] text-black">
+                Quantity limit reached
+              </h3>
+
+              <p className="mt-1 md:text-[12px] text-[10px] text-[#333]">
+                {warning}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <h1 className="mb-10 text-[36px] md:text-[44px] italic font-light">
         Shopping Bag
       </h1>
@@ -88,7 +124,7 @@ function Bag() {
                       <div className="flex h-11 w-fit items-center overflow-hidden rounded-md border border-gray-300">
                         <button
                           onClick={() => dispatch(decreaseQuantity(item.variantId))}
-                          className="h-full w-11 text-xl transition hover:bg-gray-100"
+                          className="h-full w-11 text-xl transition hover:bg-gray-100 cursor-pointer"
                         >
                           -
                         </button>
@@ -98,8 +134,8 @@ function Bag() {
                         </span>
 
                         <button
-                          onClick={() => dispatch(increaseQuantity(item.variantId))}
-                          className="h-full w-11 text-xl transition hover:bg-gray-100"
+                          onClick={() => handleIncrease(item)}
+                          className="h-full w-11 text-xl transition hover:bg-gray-100 cursor-pointer"
                         >
                           +
                         </button>
@@ -109,7 +145,7 @@ function Bag() {
                     <div className="mt-6 flex items-center justify-between">
                       <button
                         onClick={() => dispatch(removeFromCart(item.variantId))}
-                        className="text-sm text-gray-400 transition hover:text-black"
+                        className="text-sm text-gray-400 transition hover:text-black cursor-pointer"
                       >
                         Remove
                       </button>

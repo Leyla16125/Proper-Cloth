@@ -93,7 +93,7 @@ function Header() {
 
 
       <Link to="/">
-        <h1 className="text-[20px] font-normal cursor-pointer hover:text-gray-300">
+        <h1 className="md:text-[20px] hidden md:block font-normal cursor-pointer hover:text-gray-300">
           PROPER CLOTH
         </h1>
       </Link>
@@ -109,7 +109,7 @@ function Header() {
             onKeyDown={handleSearchKeyDown}
             placeholder="Search products..."
             autoFocus
-            className="absolute right-28 h-10 w-54 md:w-65 rounded-md bg-white px-4 text-sm text-black outline-none"
+            className="absolute md:right-32 right-28 h-10 w-50 md:w-60 rounded-md bg-white px-4 text-sm text-black outline-none"
           />
         )}
 
